@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+{% set rol = session.get('rol') %}
+<div class="section-header">
+    <h1>Factura {{ f.numero_factura }}</h1>
+    <div class="acciones">
+        {% if rol == 'cliente' %}
+        <a href="{{ url_for('historial_maquina', id_maquina=f.id_maquina) }}" class="btn btn-secondary">Volver</a>
+        {% else %}
+        <a href="{{ url_for('facturas') }}" class="btn btn-secondary">Volver</a>
+        {% endif %}
+        <a href="{{ url_for('descargar_factura_pdf', id_factura=f.id_factura) }}" class="btn btn-primary">Descargar PDF</a>
+    </div>
+</div>
+
+<div class="panel detalle-panel">
+    <div class="detalle-fila"><span class="detalle-label">Estado del pago</span><span class="badge">{{ f.estado_pago }}</span></div>
+    {% if f.estado_pago == 'Pagada' %}
+    <div class="detalle-fila"><span class="detalle-label">Método de pago</span><span>{{ f.metodo_pago }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Fecha de pago</span><span>{{ f.fecha_pago[:16] if f.fecha_pago else "-" }}</span></div>
+    {% endif %}
+    <div class="detalle-fila"><span class="detalle-label">Salida de la máquina</span><span>{{ f.fecha_salida[:16] if f.fecha_salida else "Aún no ha salido" }}</span></div>
+
+    {% if rol == 'admin' %}
+        {% if f.estado_pago != 'Pagada' %}
+        <p class="muted">Registra el pago del cliente para poder dar salida a la máquina.</p>
+        <form method="post" action="{{ url_for('cobrar_factura', id_factura=f.id_factura) }}" class="acciones">
+            <label>Método de pago
+                <select name="metodo_pago" required>
+                    <option value="">Elegir…</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+            </label>
+            <button type="submit" class="btn btn-primary">Registrar pago</button>
+        </form>
+        {% elif not f.fecha_salida %}
+        <p class="muted">Pago recibido. Ya puedes registrar la salida de la máquina.</p>
+        <a href="{{ url_for('registrar_salida_maquinaria', id_mantenimiento=f.id_mantenimiento) }}" class="btn btn-primary">Registrar salida de la máquina</a>
+        {% endif %}
+    {% elif f.estado_pago != 'Pagada' %}
+    <p class="muted">Tu factura está pendiente de pago. Puedes pagar en efectivo o por transferencia en el taller; ellos registrarán tu pago.</p>
+    {% endif %}
+</div>
+
+<div class="factura-hoja">
+    <div class="factura-encabezado">
+        <div><strong>GIGOLÓ ETDM S.A.</strong><div class="muted">Sistema de Gestión de Mantenimiento de Maquinaria</div></div>
+        <div class="factura-numero"><strong>{{ f.numero_factura }}</strong><div class="muted">{{ f.fecha_generacion[:16] }}</div></div>
+    </div>
+    <h3>Datos del cliente</h3>
+    <div class="detalle-fila"><span class="detalle-label">Nombre</span><span>{{ f.cliente_nombre }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Identificación</span><span>{{ f.cliente_identificacion }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Teléfono</span><span>{{ f.cliente_telefono }}</span></div>
+    <h3>Datos de la máquina</h3>
+    <div class="detalle-fila"><span class="detalle-label">Placa</span><span>{{ f.placa }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Tipo</span><span>{{ f.tipo_maquina }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Marca / Modelo</span><span>{{ f.marca }} {{ f.modelo }}</span></div>
+    <h3>Detalle del servicio</h3>
+    <div class="detalle-fila"><span class="detalle-label">Mantenimiento</span><span>{{ f.tipo_mantenimiento }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Mecánico encargado</span><span>{{ f.mecanico_nombre }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Fecha de registro</span><span>{{ f.fecha_registro[:16] if f.fecha_registro else "-" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Fecha de finalización</span><span>{{ f.fecha_finalizacion[:16] if f.fecha_finalizacion else "-" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Observaciones</span><span>{{ f.observaciones if f.observaciones else "Sin observaciones" }}</span></div>
+    <div class="factura-total"><span>TOTAL A PAGAR</span><strong>${{ "{:,.0f}".format(f.valor_total) }}</strong></div>
+</div>
+{% endblock %}

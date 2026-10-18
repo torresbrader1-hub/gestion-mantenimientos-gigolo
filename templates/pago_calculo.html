@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Cálculo de pago — {{ mecanico[2] if mecanico else "" }}</h1>
+<p class="subtitle">Periodo: {{ fecha_inicio }} al {{ fecha_fin }} · Solo mantenimientos finalizados que todavía no se han pagado.</p>
+<table class="data-table">
+    <thead><tr><th>ID Mantenimiento</th><th>Tipo</th><th>Fecha de finalización</th><th>Precio</th><th>Comisión (30%)</th></tr></thead>
+    <tbody>
+        {% for d in detalle %}
+        <tr>
+            <td>{{ d[0] }}</td><td>{{ d[1] }}</td><td>{{ d[4][:10] if d[4] else "-" }}</td>
+            <td>${{ "{:,.0f}".format(d[2]) }}</td><td>${{ "{:,.0f}".format(d[3]) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">No hay mantenimientos finalizados pendientes de pago en ese periodo.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="panel" style="margin-top:20px; max-width:420px;">
+    <div class="detalle-fila"><span class="detalle-label">Cantidad de mantenimientos</span><span>{{ cantidad }}</span></div>
+    <div class="detalle-fila destacado"><span class="detalle-label">Total a pagar</span><span>${{ "{:,.0f}".format(valor_total) }}</span></div>
+</div>
+<form method="POST" action="{{ url_for('registrar_pago') }}" class="form-card" style="margin-top:20px;">
+    <input type="hidden" name="id_mecanico" value="{{ mecanico[0] }}">
+    <input type="hidden" name="fecha_inicio" value="{{ fecha_inicio }}">
+    <input type="hidden" name="fecha_fin" value="{{ fecha_fin }}">
+    {% for d in detalle %}<input type="hidden" name="ids_mantenimiento" value="{{ d[0] }}">{% endfor %}
+    <div class="form-actions">
+        <a href="{{ url_for('pagos') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary" {% if cantidad == 0 %}disabled{% endif %}>Registrar pago</button>
+    </div>
+</form>
+{% endblock %}
+

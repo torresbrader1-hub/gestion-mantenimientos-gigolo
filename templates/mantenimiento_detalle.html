@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+{% set rol = session.get('rol') %}
+<div class="section-header">
+    <h1>Detalle del mantenimiento #{{ m[0] }}</h1>
+    {% if rol == 'cliente' %}
+    <a href="{{ url_for('historial_maquina', id_maquina=m[16]) }}" class="btn btn-secondary">Volver</a>
+    {% elif rol == 'mecanico' %}
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver a mi panel</a>
+    {% else %}
+    <a href="{{ url_for('mantenimientos') }}" class="btn btn-secondary">Volver</a>
+    {% endif %}
+</div>
+<div class="panel detalle-panel">
+    <div class="detalle-fila"><span class="detalle-label">Máquina (placa)</span><span>{{ m[1] }}</span></div>
+    {% if rol != 'mecanico' %}
+    <div class="detalle-fila"><span class="detalle-label">Cliente</span><span>{{ m[2] if m[2] else "Sin asignar" }}</span></div>
+    {% endif %}
+    <div class="detalle-fila"><span class="detalle-label">Mecánico encargado</span><span>{{ m[3] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Tipo de mantenimiento</span><span>{{ m[4] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Duración estimada</span><span>{{ m[14] }} horas</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Entrada de maquinaria (fecha y hora)</span><span>{{ m[10][:16] if m[10] else "-" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Hora de inicio</span><span>{{ m[12][:16] if m[12] else "Aún no iniciado" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Fecha y hora de finalización</span><span>{{ m[11][:16] if m[11] else "Aún no finalizado" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Fecha y hora de salida de la máquina</span><span>{{ m[13][:16] if m[13] else "Aún no ha salido" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Estado</span><span class="badge">{{ m[7] }}</span></div>
+    {% if rol != 'mecanico' %}
+    <div class="detalle-fila destacado"><span class="detalle-label">Valor cobrado (costo del servicio)</span><span>${{ "{:,.0f}".format(m[5]) }}</span></div>
+    {% endif %}
+    {% if rol != 'cliente' %}
+    <div class="detalle-fila"><span class="detalle-label">Comisión del mecánico (30%)</span><span>${{ "{:,.0f}".format(m[6]) }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Comisión pagada al mecánico</span><span>{{ "Sí" if m[15] else "No" }}</span></div>
+    {% endif %}
+    {% if rol != 'mecanico' and m[17] %}
+    <div class="detalle-fila"><span class="detalle-label">Factura</span><span><span class="badge">{{ m[18] or "Pendiente" }}</span> <a href="{{ url_for('ver_factura', id_factura=m[17]) }}">Ver factura</a></span></div>
+    {% endif %}
+    <div class="detalle-fila"><span class="detalle-label">Solicitud del cliente</span><span>{{ m[19] if m[19] else "Sin solicitud" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Observaciones del taller</span><span>{{ m[8] if m[8] else "Sin observaciones registradas" }}</span></div>
+</div>
+{% endblock %}

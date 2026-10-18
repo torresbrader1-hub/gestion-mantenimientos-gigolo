@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <h1>Historial de {{ maquina[1] if maquina else "máquina" }}</h1>
+    {% if session.get('rol') == 'cliente' %}
+        {% if session.get('id_cliente') %}
+        <a href="{{ url_for('maquinaria_por_cliente', id_cliente=session.get('id_cliente')) }}" class="btn btn-secondary">Volver a mis máquinas</a>
+        {% endif %}
+    {% else %}
+    <a href="{{ url_for('maquinaria') }}" class="btn btn-secondary">Volver a maquinaria</a>
+    {% endif %}
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mecánico</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Precio</th>
+            <th>Observaciones</th>
+            <th>Estado</th>
+            <th>Factura</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in mantenimientos %}
+        <tr>
+            <td>{{ m[0] }}</td>
+            <td>{{ m[3] }}</td>
+            <td>{{ m[4] }}</td>
+            <td>{{ m[10][:10] if m[10] else "-" }}</td>
+            <td>{{ m[10][11:16] if m[10] else "-" }}</td>
+            <td>${{ "{:,.0f}".format(m[5]) }}</td>
+            <td>{{ m[8] if m[8] else "Sin observaciones" }}</td>
+            <td><span class="badge">{{ m[7] }}</span></td>
+            <td>
+                {% if m[17] %}
+                <span class="badge">{{ m[18] or "Pendiente" }}</span>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('detalle_mantenimiento', id_mantenimiento=m[0]) }}">Ver detalle</a>
+                {% if m[17] %}
+                <a href="{{ url_for('ver_factura', id_factura=m[17]) }}">Ver factura</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="10" class="empty">Esta máquina no tiene mantenimientos registrados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <div>
+        <h1>Hola, {{ mecanico[2] }}</h1>
+        <p class="muted">Este es tu panel de trabajo: acepta tus trabajos, finalízalos y revisa tu comisión.</p>
+    </div>
+    <div class="acciones">
+        <span class="badge">{{ "Disponible" if mecanico[4] else "Ocupado" }}</span>
+        <a href="{{ url_for('pagos_por_mecanico', id_mecanico=mecanico[0]) }}" class="btn btn-secondary">Mis pagos</a>
+    </div>
+</div>
+
+<div class="kpi-grid">
+    <div class="kpi"><div class="num">{{ por_atender|length }}</div><div class="lbl">Trabajos por atender</div></div>
+    <div class="kpi"><div class="num">{{ total_finalizados }}</div><div class="lbl">Trabajos finalizados</div></div>
+    <div class="kpi"><div class="num">${{ "{:,.0f}".format(comision_pendiente) }}</div><div class="lbl">Comisión pendiente de pago</div></div>
+    <div class="kpi"><div class="num">${{ "{:,.0f}".format(comision_pagada) }}</div><div class="lbl">Comisión ya pagada</div></div>
+</div>
+
+<div class="panel detalle-panel">
+    <div class="detalle-fila"><span class="detalle-label">Horas de hoy</span><span>{{ horas_hoy }} de {{ jornada }} horas</span></div>
+        <progress class="progreso" value="{{ porcentaje_jornada }}" max="100"></progress>
+</div>
+
+<div class="bloque">
+    <h2>Trabajos por atender</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th><th>Máquina</th><th>Servicio</th><th>Entrada</th><th>Duración</th>
+                <th>Estado</th><th>Solicitud del cliente</th><th>Observaciones</th><th>Comisión</th><th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in por_atender %}
+            <tr>
+                <td>{{ m[0] }}</td>
+                <td>{{ m[1] }}</td>
+                <td>{{ m[4] }}</td>
+                <td>{{ m[10][:16] if m[10] else "-" }}</td>
+                <td>{{ m[14] }} h</td>
+                <td><span class="badge">{{ m[7] }}</span></td>
+                <td>{{ m[19] if m[19] else "Sin solicitud" }}</td>
+                <td>{{ m[8] if m[8] else "Sin observaciones" }}</td>
+                <td>${{ "{:,.0f}".format(m[6]) }}</td>
+                <td class="acciones-fila">
+                    <a href="{{ url_for('detalle_mantenimiento', id_mantenimiento=m[0]) }}">Ver detalle</a>
+                    <a href="{{ url_for('editar_observaciones', id_mantenimiento=m[0]) }}">Observaciones</a>
+                    {% if m[7] == 'Pendiente' %}
+                    <a href="{{ url_for('cambiar_estado_mantenimiento', id_mantenimiento=m[0], estado='En proceso') }}"><strong>Aceptar e iniciar</strong></a>
+                    {% elif m[7] == 'En proceso' %}
+                    <a href="{{ url_for('cambiar_estado_mantenimiento', id_mantenimiento=m[0], estado='Finalizado') }}"><strong>Finalizar</strong></a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="10" class="empty">No tienes trabajos pendientes por ahora.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="bloque">
+    <h2>Trabajos finalizados recientes</h2>
+    <table class="data-table">
+        <thead>
+            <tr><th>ID</th><th>Máquina</th><th>Servicio</th><th>Finalizado</th><th>Comisión</th><th>Comisión pagada</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            {% for m in finalizados %}
+            <tr>
+                <td>{{ m[0] }}</td>
+                <td>{{ m[1] }}</td>
+                <td>{{ m[4] }}</td>
+                <td>{{ m[11][:16] if m[11] else "-" }}</td>
+                <td>${{ "{:,.0f}".format(m[6]) }}</td>
+                <td><span class="badge">{{ "Sí" if m[15] else "No" }}</span></td>
+                <td><a href="{{ url_for('detalle_mantenimiento', id_mantenimiento=m[0]) }}">Ver detalle</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="empty">Aún no has finalizado trabajos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

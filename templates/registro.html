@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear cuenta - GIGOLÓ ETDM S.A.</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="brand-icon">⚙</span>
+            <div>
+                <strong>GIGOLÓ</strong>
+                <div class="brand-sub">ETDM S.A.</div>
+            </div>
+        </div>
+
+        <div class="auth-form-box">
+            <h2>Crear una cuenta nueva</h2>
+            <p class="subtitle">¿Ya estás registrado? <a href="{{ url_for('login') }}">Accede</a></p>
+
+            {% if error %}
+            <p class="auth-error">{{ error }}</p>
+            {% endif %}
+
+            <form method="POST" class="form-card auth-form">
+                <label>Nombres</label>
+                <input type="text" name="nombre" placeholder="Johana Martha" required>
+
+                <label>Correo electrónico</label>
+                <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+
+                <label>Contraseña</label>
+                <input type="password" name="contrasena" required>
+
+                <label>Fecha de nacimiento</label>
+                <input type="date" name="fecha_nacimiento">
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Crear cuenta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

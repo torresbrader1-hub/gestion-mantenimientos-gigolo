@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Alertas</h1>
+<p class="subtitle">Situaciones del día que requieren atención.</p>
+
+<div class="cards-grid">
+    <div class="stat-card accent">
+        <span class="stat-number">{{ datos.mecanicos_tope|length }}</span>
+        <span class="stat-label">Mecánicos a tope de jornada hoy</span>
+    </div>
+    <div class="stat-card accent">
+        <span class="stat-number">{{ datos.sin_factura|length }}</span>
+        <span class="stat-label">Mantenimientos sin factura</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ datos.maquinas_ocupadas|length }}</span>
+        <span class="stat-label">Máquinas en mantenimiento</span>
+    </div>
+</div>
+
+<div class="panel" style="margin-top:20px;">
+    <h2>Mecánicos que ya completaron su jornada de hoy</h2>
+    <table class="data-table">
+        <thead><tr><th>Mecánico</th><th>Horas asignadas hoy</th></tr></thead>
+        <tbody>
+            {% for id_mec, nombre, horas in datos.mecanicos_tope %}
+            <tr><td>{{ nombre }}</td><td>{{ horas }} horas</td></tr>
+            {% else %}
+            <tr><td colspan="2" class="empty">Ningún mecánico ha completado su jornada todavía.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="panel" style="margin-top:20px;">
+    <h2>Mantenimientos finalizados sin factura generada</h2>
+    <table class="data-table">
+        <thead><tr><th>ID</th><th>Máquina</th><th>Tipo</th><th>Cliente</th><th>Acción</th></tr></thead>
+        <tbody>
+            {% for id_mant, placa, tipo, cliente in datos.sin_factura %}
+            <tr>
+                <td>{{ id_mant }}</td><td>{{ placa }}</td><td>{{ tipo }}</td><td>{{ cliente if cliente else "Sin asignar" }}</td>
+                <td><a href="{{ url_for('generar_factura', id_mantenimiento=id_mant) }}" class="link-action">Generar factura</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty">Todos los mantenimientos finalizados ya tienen factura.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="panel" style="margin-top:20px;">
+    <h2>Máquinas actualmente en mantenimiento</h2>
+    <table class="data-table">
+        <thead><tr><th>Placa</th><th>Tipo</th><th>Cliente</th></tr></thead>
+        <tbody>
+            {% for id_maq, placa, tipo, cliente in datos.maquinas_ocupadas %}
+            <tr><td>{{ placa }}</td><td>{{ tipo }}</td><td>{{ cliente if cliente else "Sin asignar" }}</td></tr>
+            {% else %}
+            <tr><td colspan="3" class="empty">No hay máquinas en mantenimiento en este momento.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

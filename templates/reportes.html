@@ -1,0 +1,145 @@
+```html
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Reporte general</h1>
+<p class="subtitle">
+    Resumen de mantenimientos, ingresos, pagos y máquinas atendidas.
+    Sin fechas se muestra todo el historial.
+</p>
+
+<form method="GET" class="filtro-fechas">
+    <label>Desde</label>
+    <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+
+    <label>Hasta</label>
+    <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+
+    <button type="submit" class="btn btn-primary">Consultar</button>
+
+    <a href="{{ url_for('reportes') }}" class="btn btn-secondary">
+        Limpiar
+    </a>
+
+    <a href="{{ url_for('exportar_reporte_csv', fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}"
+       class="btn btn-secondary">
+        Exportar CSV
+    </a>
+</form>
+
+<div class="cards-grid">
+
+    <div class="stat-card">
+        <span class="stat-number">
+            {{ datos.cantidad_mantenimientos }}
+        </span>
+        <span class="stat-label">Mantenimientos realizados</span>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-number">
+            {{ datos.maquinas_atendidas }}
+        </span>
+        <span class="stat-label">Máquinas atendidas</span>
+    </div>
+
+    <div class="stat-card accent">
+        <span class="stat-number">
+            ${{ "{:,.0f}".format(datos.ingresos_total) }}
+        </span>
+        <span class="stat-label">Ingresos generados</span>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-number">
+            ${{ "{:,.0f}".format(datos.pagos_total) }}
+        </span>
+        <span class="stat-label">Pagado a mecánicos</span>
+    </div>
+
+</div>
+
+<div class="panel" style="margin-bottom: 20px;">
+
+    <h2>Servicios realizados en el periodo</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Finalizado</th>
+                <th>Máquina</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Mecánico</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for s in servicios %}
+            <tr>
+                <td>{{ s[0] }}</td>
+                <td>{{ s[1][:16] if s[1] else "-" }}</td>
+                <td>{{ s[2] }}</td>
+                <td>{{ s[3] if s[3] else "Sin asignar" }}</td>
+                <td>{{ s[4] }}</td>
+                <td>{{ s[5] }}</td>
+                <td>${{ "{:,.0f}".format(s[6]) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="empty">
+                    No hay servicios finalizados en este periodo.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<div class="panel">
+
+    <h2>Ingresos por tipo de servicio</h2>
+
+    <div class="grafico-barras">
+
+        {% for tipo, cantidad, ingresos in ingresos_tipo %}
+
+            {% set ancho = ((ingresos / maximo) * 100) if maximo else 0 %}
+
+            <div class="grafico-fila">
+
+                <span class="grafico-etiqueta">
+                    {{ tipo }}
+                </span>
+
+                
+             
+<div class="grafico-pista">
+    <div class="grafico-barra"
+         style="--ancho-barra: {{ ancho | default(0) }}%;">
+    </div>
+</div>
+
+                <span class="grafico-valor">
+                    ${{ "{:,.0f}".format(ingresos) }} ({{ cantidad }})
+                </span>
+
+            </div>
+
+        {% else %}
+
+            <p class="empty">
+                No hay ingresos por servicios en este periodo.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

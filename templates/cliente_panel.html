@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <div>
+        <h1>Hola, {{ cliente[2] }}</h1>
+        <p class="muted">Este es tu panel: aquí ves tus máquinas, sus mantenimientos y tus facturas.</p>
+    </div>
+</div>
+
+{% if facturas_pendientes %}
+<div class="aviso">
+    Tienes <strong>{{ facturas_pendientes }}</strong> factura{{ 's' if facturas_pendientes != 1 }} pendiente{{ 's' if facturas_pendientes != 1 }} de pago
+    por un total de <strong>${{ "{:,.0f}".format(total_por_pagar) }}</strong>.
+    Puedes pagar en efectivo o por transferencia en el taller.
+</div>
+{% endif %}
+
+<div class="kpi-grid">
+    <div class="kpi"><div class="num">{{ maquinas|length }}</div><div class="lbl">Máquinas registradas</div></div>
+    <div class="kpi"><div class="num">{{ total_activos }}</div><div class="lbl">Mantenimientos en curso</div></div>
+    <div class="kpi {{ 'alerta' if facturas_pendientes }}"><div class="num">{{ facturas_pendientes }}</div><div class="lbl">Facturas pendientes</div></div>
+    <div class="kpi {{ 'alerta' if facturas_pendientes }}"><div class="num">${{ "{:,.0f}".format(total_por_pagar) }}</div><div class="lbl">Total por pagar</div></div>
+</div>
+
+<div class="bloque">
+    <h2>Mis datos</h2>
+    <div class="panel detalle-panel">
+        <div class="detalle-fila"><span class="detalle-label">Identificación</span><span>{{ cliente[1] }}</span></div>
+        <div class="detalle-fila"><span class="detalle-label">Nombre</span><span>{{ cliente[2] }}</span></div>
+        <div class="detalle-fila"><span class="detalle-label">Teléfono</span><span>{{ cliente[3] if cliente[3] else "-" }}</span></div>
+    </div>
+</div>
+
+<div class="bloque">
+    <h2>Mis máquinas</h2>
+    <table class="data-table">
+        <thead>
+            <tr><th>Placa</th><th>Tipo</th><th>Marca</th><th>Modelo</th><th>Estado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            {% for m in maquinas %}
+            <tr>
+                <td>{{ m[1] }}</td>
+                <td>{{ m[2] }}</td>
+                <td>{{ m[3] }}</td>
+                <td>{{ m[4] }}</td>
+                <td><span class="badge">{{ m[5] }}</span></td>
+                <td><a href="{{ url_for('historial_maquina', id_maquina=m[0]) }}">Ver historial</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="empty">Aún no tienes máquinas registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="bloque">
+    <h2>Mis mantenimientos recientes</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th><th>Máquina</th><th>Servicio</th><th>Fecha</th><th>Estado</th>
+                <th>Mi solicitud</th><th>Observaciones del taller</th><th>Valor</th><th>Factura</th><th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in mantenimientos %}
+            <tr>
+                <td>{{ m[0] }}</td>
+                <td>{{ m[1] }}</td>
+                <td>{{ m[4] }}</td>
+                <td>{{ m[10][:10] if m[10] else "-" }}</td>
+                <td><span class="badge">{{ m[7] }}</span></td>
+                <td>{{ m[19] if m[19] else "Sin solicitud" }}</td>
+                <td>{{ m[8] if m[8] else "Sin observaciones" }}</td>
+                <td>${{ "{:,.0f}".format(m[5]) }}</td>
+                <td>{% if m[17] %}<span class="badge">{{ m[18] or "Pendiente" }}</span>{% else %}-{% endif %}</td>
+                <td class="acciones-fila">
+                    <a href="{{ url_for('detalle_mantenimiento', id_mantenimiento=m[0]) }}">Ver detalle</a>
+                    {% if m[17] %}
+                    {% if m[7] in ['Pendiente', 'En proceso'] %}
+                    <a href="{{ url_for('solicitud_cliente', id_mantenimiento=m[0]) }}">Editar mi solicitud</a>
+                    {% endif %}
+                    <a href="{{ url_for('ver_factura', id_factura=m[17]) }}">Ver factura</a>
+                    <a href="{{ url_for('descargar_factura_pdf', id_factura=m[17]) }}">PDF</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="10" class="empty">Todavía no tienes mantenimientos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

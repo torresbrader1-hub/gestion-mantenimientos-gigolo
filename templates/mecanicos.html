@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Gestión de Mecánicos</h1>
+    <a href="{{ url_for('nuevo_mecanico') }}" class="btn btn-primary">+ Nuevo mecánico</a>
+</div>
+<table class="data-table">
+    <thead>
+        <tr><th>ID</th><th>Identificación</th><th>Nombre</th><th>Teléfono</th><th>Disponibilidad</th><th>Carga de hoy</th><th>Mant. finalizados</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for m in mecanicos %}
+        <tr>
+            <td>{{ m[0] }}</td><td>{{ m[1] }}</td><td>{{ m[2] }}</td><td>{{ m[3] }}</td>
+            <td>{% if m[4] %}<span class="badge badge-ok">Disponible</span>{% else %}<span class="badge badge-off">No disponible</span>{% endif %}</td>
+            <td>{{ carga.get(m[0], 0) }} / {{ jornada }} h</td>
+            <td>{{ finalizados.get(m[0], 0) }}</td>
+            <td class="acciones">
+                <a href="{{ url_for('perfil_mecanico', id_mecanico=m[0]) }}" class="link-action">Ver perfil</a>
+                <a href="{{ url_for('editar_mecanico', id_mecanico=m[0]) }}" class="link-action">Editar</a>
+                {% if m[4] %}
+                <a href="{{ url_for('toggle_mecanico', id_mecanico=m[0]) }}" class="link-action">Marcar no disponible</a>
+                {% elif m[0] in ocupados %}
+                <span class="muted">Ocupado en un mantenimiento</span>
+                {% else %}
+                <a href="{{ url_for('toggle_mecanico', id_mecanico=m[0]) }}" class="link-action">Marcar disponible</a>
+                {% endif %}
+                <a href="{{ url_for('pagos_por_mecanico', id_mecanico=m[0]) }}" class="link-action">Ver pagos</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="empty">No hay mecánicos registrados todavía.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

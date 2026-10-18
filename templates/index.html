@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Panel general</h1>
+
+<div class="cards-grid">
+    <a href="{{ url_for('clientes') }}" class="stat-card">
+        <span class="stat-number">{{ total_clientes }}</span>
+        <span class="stat-label">Clientes registrados</span>
+    </a>
+    <a href="{{ url_for('maquinaria') }}" class="stat-card">
+        <span class="stat-number">{{ total_maquinas }}</span>
+        <span class="stat-label">Máquinas registradas</span>
+    </a>
+    <a href="{{ url_for('mecanicos') }}" class="stat-card">
+        <span class="stat-number">{{ total_mecanicos }}</span>
+        <span class="stat-label">Mecánicos registrados</span>
+    </a>
+    <a href="{{ url_for('mecanicos') }}" class="stat-card accent">
+        <span class="stat-number">{{ disponibles }}</span>
+        <span class="stat-label">Mecánicos disponibles</span>
+    </a>
+    <a href="{{ url_for('mantenimientos') }}" class="stat-card">
+        <span class="stat-number">{{ total_mantenimientos }}</span>
+        <span class="stat-label">Mantenimientos registrados</span>
+    </a>
+</div>
+
+{% endblock %}

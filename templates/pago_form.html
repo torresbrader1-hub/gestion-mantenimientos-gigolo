@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Calcular pago semanal</h1>
+<p class="subtitle">El pago es semanal (máximo 7 días). Solo se cobran los mantenimientos finalizados que aún no se han pagado.</p>
+{% if error %}<p class="auth-error" style="max-width:420px;">{{ error }}</p>{% endif %}
+<form method="POST" class="form-card">
+    <label>Mecánico</label>
+    <select name="id_mecanico" required>
+        {% for m in mecanicos %}<option value="{{ m[0] }}">{{ m[2] }}</option>{% else %}<option disabled>No hay mecánicos registrados</option>{% endfor %}
+    </select>
+    <label>Desde</label>
+    <input type="date" name="fecha_inicio" id="fecha_inicio" required>
+    <label>Hasta (se completa con 7 días)</label>
+    <input type="date" name="fecha_fin" id="fecha_fin" required>
+    <div class="form-actions">
+        <a href="{{ url_for('pagos') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Calcular</button>
+    </div>
+</form>
+<script>
+    var desde = document.getElementById("fecha_inicio");
+    var hasta = document.getElementById("fecha_fin");
+    desde.addEventListener("change", function () {
+        if (!desde.value) return;
+        var d = new Date(desde.value + "T00:00:00");
+        d.setDate(d.getDate() + 6);
+        hasta.min = desde.value;
+        hasta.max = d.toISOString().slice(0, 10);
+        hasta.value = hasta.max;
+    });
+</script>
+{% endblock %}

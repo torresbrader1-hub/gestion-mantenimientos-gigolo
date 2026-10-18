@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Registrar mantenimiento</h1>
+{% if error %}<p class="auth-error" style="max-width:420px;">{{ error }}</p>{% endif %}
+{% if total_maquinas == 0 %}
+<div class="panel">
+    <p class="muted">No hay máquinas registradas. Registra una máquina antes de crear un mantenimiento.</p>
+    <a href="{{ url_for('nueva_maquina') }}" class="btn btn-primary">Registrar máquina</a>
+</div>
+{% elif not hay_maquinas %}
+<div class="panel">
+    <p class="muted">Todas las máquinas están en mantenimiento o listas para entrega. Registra la salida de una máquina finalizada para poder usarla de nuevo.</p>
+    <a href="{{ url_for('mantenimientos') }}" class="btn btn-primary">Ir a mantenimientos</a>
+</div>
+{% elif not hay_mecanicos %}
+<div class="panel">
+    <p class="muted">No hay mecánicos disponibles: todos están ocupados o ya completaron su jornada de {{ jornada }} horas de hoy (máximo 4 mantenimientos de 2 horas por día).</p>
+    <a href="{{ url_for('mecanicos') }}" class="btn btn-primary">Ver mecánicos</a>
+</div>
+{% else %}
+<form method="POST" class="form-card">
+    <label>Máquina (solo disponibles)</label>
+    <select name="id_maquina" required>
+        {% for m in maquinas %}<option value="{{ m[0] }}">{{ m[1] }} — {{ m[3] }} {{ m[4] }}</option>{% endfor %}
+    </select>
+    <label>Mecánico encargado (solo disponibles)</label>
+    <select name="id_mecanico" required>
+        {% for m in mecanicos %}<option value="{{ m[0] }}">{{ m[2] }} — {{ horas.get(m[0], 0) }}/{{ jornada }} h hoy</option>{% endfor %}
+    </select>
+    <label>Tipo de mantenimiento</label>
+    <select name="tipo" required>
+        <option value="Preventivo">Preventivo — $300.000</option>
+        <option value="General">General — $400.000</option>
+        <option value="Correctivo">Correctivo — $500.000</option>
+    </select>
+    <label>Descripción del trabajo / observaciones</label>
+    <input type="text" name="observaciones" placeholder="Ej: cambio de aceite y filtros">
+    <p class="muted">El precio y la comisión del mecánico (30%) se calculan automáticamente. Cada mantenimiento dura 2 horas.</p>
+    <div class="form-actions">
+        <a href="{{ url_for('mantenimientos') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

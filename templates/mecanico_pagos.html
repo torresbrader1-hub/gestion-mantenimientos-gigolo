@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <h1>Pagos de {{ mecanico[2] if mecanico else "mecánico" }}</h1>
+    <a href="{{ url_for('mecanicos') }}" class="btn btn-secondary">Volver a mecánicos</a>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Periodo</th>
+            <th>Mantenimientos</th>
+            <th>Valor total pagado</th>
+            <th>Fecha de pago</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pagos %}
+        <tr>
+            <td>{{ p[0] }}</td>
+            <td>{{ p[2] }} — {{ p[3] }}</td>
+            <td>{{ p[4] }}</td>
+            <td>${{ "{:,.0f}".format(p[5]) }}</td>
+            <td>{{ p[6][:16].replace("T", " ") if p[6] else "-" }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">Este mecánico no tiene pagos registrados todavía.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

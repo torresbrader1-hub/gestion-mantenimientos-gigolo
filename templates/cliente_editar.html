@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Modificar cliente</h1>
+{% if errores %}
+<div class="auth-error" style="max-width:420px;">
+    {% for e in errores %}<div>{{ e }}</div>{% endfor %}
+</div>
+{% endif %}
+<form method="POST" class="form-card">
+    <label>Identificación</label>
+    <input type="text" value="{{ cliente[1] }}" disabled>
+    <label>Nombre</label>
+    <input type="text" name="nombre" value="{{ datos.get('nombre', cliente[2]) }}"
+           pattern="[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]{3,50}" maxlength="50"
+           title="Mínimo 3 letras"
+           oninput="this.value=this.value.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]/g,'')" required>
+    <label>Teléfono</label>
+    <input type="text" name="telefono" value="{{ datos.get('telefono', cliente[3]) }}"
+           inputmode="numeric" pattern="[0-9]{7,10}" maxlength="10"
+           title="Entre 7 y 10 dígitos"
+           oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+    <div class="form-actions">
+        <a href="{{ url_for('clientes') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    </div>
+</form>
+{% endblock %}

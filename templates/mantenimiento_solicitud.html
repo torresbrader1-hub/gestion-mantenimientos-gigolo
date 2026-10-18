@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Mi solicitud del mantenimiento #{{ m[0] }}</h1>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver a mi panel</a>
+</div>
+
+<div class="panel detalle-panel">
+    <div class="detalle-fila"><span class="detalle-label">Máquina (placa)</span><span>{{ m[1] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Servicio</span><span>{{ m[4] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Estado</span><span class="badge">{{ m[7] }}</span></div>
+</div>
+
+{% if m[7] in ['Pendiente', 'En proceso'] %}
+<form method="post" class="panel" style="padding: 20px; margin-top: 16px;">
+    <label for="observaciones_cliente"><strong>¿Qué necesitas que le hagan a tu máquina?</strong></label>
+    <p class="muted">Lo que escribas lo verán el administrador y el mecánico encargado.</p>
+    <textarea id="observaciones_cliente" name="observaciones_cliente" rows="6" maxlength="500"
+        style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit;">{{ m[19] or '' }}</textarea>
+    <div class="acciones" style="margin-top: 12px;">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% else %}
+<div class="aviso">Este mantenimiento ya terminó o fue cancelado, por eso la solicitud ya no se puede cambiar.</div>
+<div class="panel detalle-panel">
+    <div class="detalle-fila"><span class="detalle-label">Mi solicitud</span><span>{{ m[19] if m[19] else "Sin solicitud" }}</span></div>
+</div>
+{% endif %}
+{% endblock %}

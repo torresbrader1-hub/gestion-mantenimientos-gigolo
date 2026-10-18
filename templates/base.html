@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GIGOLÓ ETDM S.A. - Gestión de Mantenimiento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin: 18px 0 24px; }
+        .kpi { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 18px; }
+        .kpi .num { font-size: 28px; font-weight: 700; color: #1e3a5f; }
+        .kpi .lbl { color: #64748b; font-size: 14px; margin-top: 2px; }
+        .kpi.alerta .num { color: #b45309; }
+        .aviso { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; border-radius: 10px; padding: 12px 16px; margin: 16px 0; }
+        .bloque { margin-top: 28px; }
+        .bloque h2 { font-size: 18px; margin: 0 0 10px; }
+        .barra { height: 10px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin-top: 8px; }
+        .barra span { display: block; height: 100%; background: #2b6cb0; }
+        .acciones-fila a { margin-right: 10px; white-space: nowrap; }
+        .progreso { width: 100%; height: 10px; margin-top: 8px; accent-color: #2b6cb0; }
+    </style>
+</head>
+<body>
+    {% set rol = session.get('rol') %}
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-icon">⚙</span>
+            <div>
+                <strong>GIGOLÓ</strong>
+                <div class="brand-sub">ETDM S.A.</div>
+            </div>
+        </div>
+        <nav>
+            {% if rol == 'admin' %}
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('clientes') }}">Clientes</a>
+            <a href="{{ url_for('maquinaria') }}">Maquinaria</a>
+            <a href="{{ url_for('mecanicos') }}">Mecánicos</a>
+            <a href="{{ url_for('mantenimientos') }}">Mantenimientos</a>
+            <a href="{{ url_for('pagos') }}">Pagos</a>
+            <a href="{{ url_for('facturas') }}">Facturas</a>
+            <a href="{{ url_for('ingresos') }}">Ingresos</a>
+            <a href="{{ url_for('reportes') }}">Reportes</a>
+            <a href="{{ url_for('alertas') }}">Alertas</a>
+            <a href="{{ url_for('usuarios') }}">Usuarios</a>
+            {% elif rol == 'mecanico' %}
+            <a href="{{ url_for('index') }}">Mi panel</a>
+            {% if session.get('id_mecanico') %}
+            <a href="{{ url_for('pagos_por_mecanico', id_mecanico=session.get('id_mecanico')) }}">Mis pagos</a>
+            {% endif %}
+            {% elif rol == 'cliente' %}
+            <a href="{{ url_for('index') }}">Mi panel</a>
+            {% if session.get('id_cliente') %}
+            <a href="{{ url_for('maquinaria_por_cliente', id_cliente=session.get('id_cliente')) }}">Mis máquinas</a>
+            {% endif %}
+            {% endif %}
+            {% if session.get('usuario_nombre') %}
+            <span class="nav-user">{{ session.get('usuario_nombre') }} ({{ rol }})</span>
+            <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main class="content">{% block content %}{% endblock %}</main>
+    <footer class="footer">© GIGOLÓ ETDM S.A. — Sistema de Gestión de Mantenimiento de Maquinaria</footer>
+</body>
+</html>

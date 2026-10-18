@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>{{ cliente[2] }}</h1>
+    <div class="acciones">
+        <a href="{{ url_for('editar_cliente', id_cliente=cliente[0]) }}" class="btn btn-secondary">Editar</a>
+        <a href="{{ url_for('clientes') }}" class="btn btn-secondary">Volver a clientes</a>
+    </div>
+</div>
+<div class="panel detalle-panel" style="margin-bottom:24px;">
+    <div class="detalle-fila"><span class="detalle-label">Identificación</span><span>{{ cliente[1] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Nombre</span><span>{{ cliente[2] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Teléfono</span><span>{{ cliente[3] }}</span></div>
+    <div class="detalle-fila destacado"><span class="detalle-label">Máquinas registradas</span><span>{{ maquinas|length }}</span></div>
+</div>
+<h2 style="font-size:16px; margin: 0 0 12px;">Maquinaria del cliente</h2>
+<table class="data-table">
+    <thead><tr><th>Placa</th><th>Tipo</th><th>Marca</th><th>Modelo</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+        {% for m in maquinas %}
+        <tr>
+            <td>{{ m[1] }}</td><td>{{ m[2] }}</td><td>{{ m[3] }}</td><td>{{ m[4] }}</td><td><span class="badge">{{ m[5] }}</span></td>
+            <td class="acciones"><a href="{{ url_for('historial_maquina', id_maquina=m[0]) }}" class="link-action">Ver historial</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">Este cliente no tiene máquinas registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

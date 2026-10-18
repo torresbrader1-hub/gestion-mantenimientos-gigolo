@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <h1>Máquinas de {{ cliente[2] if cliente else "cliente" }}</h1>
+    {% if session.get('rol') == 'admin' %}
+    <a href="{{ url_for('clientes') }}" class="btn btn-secondary">Volver a clientes</a>
+    {% endif %}
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Placa</th>
+            <th>Tipo</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in maquinas %}
+        <tr>
+            <td>{{ m[1] }}</td>
+            <td>{{ m[2] }}</td>
+            <td>{{ m[3] }}</td>
+            <td>{{ m[4] }}</td>
+            <td><span class="badge">{{ m[5] }}</span></td>
+            <td><a href="{{ url_for('historial_maquina', id_maquina=m[0]) }}">Ver historial</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">Este cliente no tiene máquinas registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

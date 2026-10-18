@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión - GIGOLÓ ETDM S.A.</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="brand-icon">⚙</span>
+            <div>
+                <strong>GIGOLÓ</strong>
+                <div class="brand-sub">ETDM S.A.</div>
+            </div>
+        </div>
+
+        <div class="auth-form-box">
+            <h2>Iniciar sesión</h2>
+            <p class="subtitle">¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate</a></p>
+
+            {% if error %}
+            <p class="auth-error">{{ error }}</p>
+            {% endif %}
+
+            <form method="POST" class="form-card auth-form">
+                <label>Correo electrónico</label>
+                <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+
+                <label>Contraseña</label>
+                <input type="password" name="contrasena" required>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Facturas generadas</h1>
+    <a href="{{ url_for('mantenimientos', estado='Finalizado') }}" class="btn btn-primary">Ver mantenimientos finalizados</a>
+</div>
+<table class="data-table">
+    <thead><tr><th>N° Factura</th><th>Fecha</th><th>Cliente</th><th>Máquina</th><th>Servicio</th><th>Valor</th><th>Acciones</th></tr></thead>
+    <tbody>
+        {% for f in facturas %}
+        <tr>
+            <td>{{ f[1] }}</td><td>{{ f[2][:16] }}</td><td>{{ f[3] if f[3] else "Sin asignar" }}</td>
+            <td>{{ f[4] }}</td><td>{{ f[5] }}</td><td>${{ "{:,.0f}".format(f[6]) }}</td>
+            <td class="acciones">
+                <a href="{{ url_for('ver_factura', id_factura=f[0]) }}" class="link-action">Ver</a>
+                <a href="{{ url_for('descargar_factura_pdf', id_factura=f[0]) }}" class="link-action">Descargar PDF</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">Todavía no hay facturas. Genera una desde un mantenimiento finalizado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

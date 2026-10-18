@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Ingresos por servicios</h1>
+<p class="subtitle">Suma de lo cobrado en mantenimientos finalizados, por tipo de servicio. Sin fechas se muestra todo el historial.</p>
+<form method="GET" class="filtro-fechas">
+    <label>Desde</label>
+    <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+    <label>Hasta</label>
+    <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+    <button type="submit" class="btn btn-primary">Consultar</button>
+    <a href="{{ url_for('ingresos') }}" class="btn btn-secondary">Limpiar</a>
+</form>
+<table class="data-table">
+    <thead><tr><th>Tipo de servicio</th><th>Cantidad realizada</th><th>Ingresos</th></tr></thead>
+    <tbody>
+        {% for f in filas %}
+        <tr><td>{{ f[0] }}</td><td>{{ f[1] }}</td><td>${{ "{:,.0f}".format(f[2]) }}</td></tr>
+        {% endfor %}
+        <tr class="fila-total"><td>Total</td><td>{{ total_cantidad }}</td><td>${{ "{:,.0f}".format(total_ingresos) }}</td></tr>
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Gestión de Maquinaria</h1>
+    <div class="acciones">
+        <a href="{{ url_for('maquinaria_categorias') }}" class="btn btn-secondary">Ver por categoría</a>
+        <a href="{{ url_for('nueva_maquina') }}" class="btn btn-primary">+ Nueva máquina</a>
+    </div>
+</div>
+<div class="filtros">
+    <span class="filtro-titulo">Categoría:</span>
+    <a href="{{ url_for('maquinaria', estado=estado_actual) }}" class="filtro {% if not categoria_actual %}activo{% endif %}">Todas</a>
+    {% for c in categorias %}
+    <a href="{{ url_for('maquinaria', categoria=c, estado=estado_actual) }}" class="filtro {% if categoria_actual == c %}activo{% endif %}">{{ c }}</a>
+    {% endfor %}
+</div>
+<div class="filtros">
+    <span class="filtro-titulo">Estado:</span>
+    <a href="{{ url_for('maquinaria', categoria=categoria_actual) }}" class="filtro {% if not estado_actual %}activo{% endif %}">Todos</a>
+    {% for e in estados %}
+    <a href="{{ url_for('maquinaria', categoria=categoria_actual, estado=e) }}" class="filtro {% if estado_actual == e %}activo{% endif %}">{{ e }}</a>
+    {% endfor %}
+</div>
+<table class="data-table">
+    <thead><tr><th>Placa</th><th>Categoría</th><th>Tipo</th><th>Marca</th><th>Modelo</th><th>Cliente</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+        {% for m in maquinas %}
+        <tr>
+            <td>{{ m[1] }}</td><td>{{ m[8] }}</td><td>{{ m[2] }}</td><td>{{ m[3] }}</td><td>{{ m[4] }}</td>
+            <td>{{ m[6] if m[6] else "Sin asignar" }}</td>
+            <td>
+                {% if m[5] == "Disponible" %}<span class="badge badge-ok">Disponible</span>
+                {% elif m[5] == "Listo para entrega" %}<span class="badge badge-warn">Listo para entrega</span>
+                {% else %}<span class="badge">{{ m[5] }}</span>{% endif %}
+            </td>
+            <td class="acciones">
+                <a href="{{ url_for('editar_maquina', id_maquina=m[0]) }}" class="link-action">Editar</a>
+                <a href="{{ url_for('historial_maquina', id_maquina=m[0]) }}" class="link-action">Ver historial</a>
+                {% if m[7] %}
+                <a href="{{ url_for('detalle_cliente', id_cliente=m[7]) }}" class="link-action">Ver cliente</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="empty">No hay máquinas registradas con ese filtro.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+

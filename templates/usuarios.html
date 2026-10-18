@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Usuarios y roles</h1>
+
+{% if error %}<p style="color:#b00020;"><strong>{{ error }}</strong></p>{% endif %}
+{% if ok %}<p style="color:#1b7a3d;"><strong>{{ ok }}</strong></p>{% endif %}
+
+<p>Los usuarios que se registran solos quedan como <strong>cliente</strong> sin vincular.
+   Elige el rol y, si es mecánico o cliente, el registro al que pertenece.</p>
+
+<table style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th align="left">Usuario</th>
+            <th align="left">Correo</th>
+            <th align="left">Rol</th>
+            <th align="left">Mecánico vinculado</th>
+            <th align="left">Cliente vinculado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td>{{ u[1] }}</td>
+            <td>{{ u[2] }}</td>
+            <td>
+                <select name="rol" form="f{{ u[0] }}">
+                    <option value="admin" {{ 'selected' if u[3] == 'admin' }}>Administrador</option>
+                    <option value="mecanico" {{ 'selected' if u[3] == 'mecanico' }}>Mecánico</option>
+                    <option value="cliente" {{ 'selected' if u[3] == 'cliente' }}>Cliente</option>
+                </select>
+            </td>
+            <td>
+                <select name="id_mecanico" form="f{{ u[0] }}">
+                    <option value="">—</option>
+                    {% for m in mecanicos %}
+                    <option value="{{ m[0] }}" {{ 'selected' if u[4] == m[0] }}>{{ m[1] }} {{ m[2] }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="id_cliente" form="f{{ u[0] }}">
+                    <option value="">—</option>
+                    {% for c in clientes %}
+                    <option value="{{ c[0] }}" {{ 'selected' if u[5] == c[0] }}>{{ c[1] }} {{ c[2] }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <form id="f{{ u[0] }}" method="post" action="{{ url_for('cambiar_rol_usuario', id_usuario=u[0]) }}"></form>
+                <button type="submit" form="f{{ u[0] }}">Guardar</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

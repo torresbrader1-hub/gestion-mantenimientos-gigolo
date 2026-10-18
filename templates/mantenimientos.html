@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Gestión de Mantenimientos</h1>
+    <div class="acciones">
+        <a href="{{ url_for('consulta_rapida_mantenimiento') }}" class="btn btn-secondary">Consulta rápida</a>
+        <a href="{{ url_for('nuevo_mantenimiento') }}" class="btn btn-primary">+ Nuevo mantenimiento</a>
+    </div>
+</div>
+<form method="GET" class="filtro-fechas">
+    <label>Buscar</label>
+    <input type="text" name="q" value="{{ busqueda }}" placeholder="ID, placa, cliente, mecánico o tipo">
+    {% if filtro_actual %}<input type="hidden" name="estado" value="{{ filtro_actual }}">{% endif %}
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    {% if busqueda %}<a href="{{ url_for('mantenimientos', estado=filtro_actual) }}" class="btn btn-secondary">Limpiar</a>{% endif %}
+</form>
+
+<div class="filtros">
+    <a href="{{ url_for('mantenimientos', q=busqueda or none) }}" class="filtro {% if not filtro_actual %}activo{% endif %}">Todos</a>
+    <a href="{{ url_for('mantenimientos', estado='Pendiente', q=busqueda or none) }}" class="filtro {% if filtro_actual == 'Pendiente' %}activo{% endif %}">Pendientes</a>
+    <a href="{{ url_for('mantenimientos', estado='En proceso', q=busqueda or none) }}" class="filtro {% if filtro_actual == 'En proceso' %}activo{% endif %}">En proceso</a>
+    <a href="{{ url_for('mantenimientos', estado='Finalizado', q=busqueda or none) }}" class="filtro {% if filtro_actual == 'Finalizado' %}activo{% endif %}">Finalizados</a>
+    <a href="{{ url_for('mantenimientos', estado='Cancelado', q=busqueda or none) }}" class="filtro {% if filtro_actual == 'Cancelado' %}activo{% endif %}">Cancelados</a>
+</div>
+<table class="data-table">
+    <thead>
+        <tr><th>ID</th><th>Máquina</th><th>Cliente</th><th>Mecánico</th><th>Tipo</th><th>Fecha</th><th>Hora</th><th>Precio</th><th>Comisión (30%)</th><th>Estado</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for m in mantenimientos %}
+        <tr>
+            <td>{{ m[0] }}</td><td>{{ m[1] }}</td><td>{{ m[2] if m[2] else "Sin asignar" }}</td><td>{{ m[3] }}</td><td>{{ m[4] }}</td>
+            <td>{{ m[10][:10] if m[10] else "-" }}</td><td>{{ m[10][11:16] if m[10] else "-" }}</td>
+            <td>${{ "{:,.0f}".format(m[5]) }}</td><td>${{ "{:,.0f}".format(m[6]) }}</td>
+            <td>
+                {% if m[7] == "Pendiente" %}<span class="badge">Pendiente</span>
+                {% elif m[7] == "En proceso" %}<span class="badge">En proceso</span>
+                {% elif m[7] == "Finalizado" %}<span class="badge badge-ok">Finalizado</span>
+                {% else %}<span class="badge badge-off">Cancelado</span>{% endif %}
+            </td>
+            <td class="acciones">
+                <a href="{{ url_for('detalle_mantenimiento', id_mantenimiento=m[0]) }}" class="link-action">Ver detalle</a>
+                {% if m[7] in ["Pendiente", "En proceso"] %}
+                <a href="{{ url_for('editar_observaciones', id_mantenimiento=m[0]) }}" class="link-action">Observaciones</a>
+                {% endif %}
+                {% if m[7] == "Pendiente" %}
+                <a href="{{ url_for('cambiar_estado_mantenimiento', id_mantenimiento=m[0], estado='En proceso') }}" class="link-action">Iniciar</a>
+                <a href="{{ url_for('cambiar_estado_mantenimiento', id_mantenimiento=m[0], estado='Cancelado') }}" class="link-action">Cancelar</a>
+                {% elif m[7] == "En proceso" %}
+                <a href="{{ url_for('cambiar_estado_mantenimiento', id_mantenimiento=m[0], estado='Finalizado') }}" class="link-action">Finalizar</a>
+                {% elif m[7] == "Finalizado" %}
+                    {% if not m[13] %}
+                    <a href="{{ url_for('registrar_salida_maquinaria', id_mantenimiento=m[0]) }}" class="link-action">Registrar salida</a>
+                    {% endif %}
+                    {% if m[17] %}
+                    <a href="{{ url_for('ver_factura', id_factura=m[17]) }}" class="link-action">Ver factura</a>
+                    {% else %}
+                    <a href="{{ url_for('generar_factura', id_mantenimiento=m[0]) }}" class="link-action">Generar factura</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="11" class="empty">No hay mantenimientos registrados en este filtro.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

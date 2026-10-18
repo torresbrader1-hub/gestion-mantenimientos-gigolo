@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Registrar máquina</h1>
+<form method="POST" class="form-card">
+    <label>Placa</label>
+    <input type="text" name="placa" required>
+    <label>Tipo</label>
+    <select name="tipo" required>
+        <optgroup label="Agrícola">
+            <option value="Tractor">Tractor</option>
+            <option value="Cosechadora">Cosechadora</option>
+            <option value="Sembradora">Sembradora</option>
+        </optgroup>
+        <optgroup label="Industrial">
+            <option value="Compresor">Compresor</option>
+            <option value="Generador Eléctrico">Generador Eléctrico</option>
+            <option value="Montacargas">Montacargas</option>
+        </optgroup>
+        <optgroup label="Construcción">
+            <option value="Excavadora">Excavadora</option>
+            <option value="Retroexcavadora">Retroexcavadora</option>
+            <option value="Volqueta">Volqueta</option>
+        </optgroup>
+    </select>
+    <label>Marca</label>
+    <input type="text" name="marca" required>
+    <label>Modelo</label>
+    <input type="text" name="modelo" required>
+    <label>Cliente propietario</label>
+    <select name="id_cliente" required>
+        {% for c in clientes %}
+        <option value="{{ c[0] }}">{{ c[2] }} (ID {{ c[0] }})</option>
+        {% else %}
+        <option disabled>No hay clientes registrados — registra uno primero</option>
+        {% endfor %}
+    </select>
+    <div class="form-actions">
+        <a href="{{ url_for('maquinaria') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>
+{% endblock %}
+

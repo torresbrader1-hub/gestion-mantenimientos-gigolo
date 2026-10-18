@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Modificar máquina</h1>
+<form method="POST" class="form-card">
+    <label>Placa</label>
+    <input type="text" value="{{ maquina[1] }}" disabled>
+    <label>Tipo</label>
+    <select name="tipo" required>
+        <optgroup label="Agrícola">
+            {% for o in ["Tractor","Cosechadora","Sembradora"] %}
+            <option value="{{ o }}" {% if maquina[2]==o %}selected{% endif %}>{{ o }}</option>
+            {% endfor %}
+        </optgroup>
+        <optgroup label="Industrial">
+            {% for o in ["Compresor","Generador Eléctrico","Montacargas"] %}
+            <option value="{{ o }}" {% if maquina[2]==o %}selected{% endif %}>{{ o }}</option>
+            {% endfor %}
+        </optgroup>
+        <optgroup label="Construcción">
+            {% for o in ["Excavadora","Retroexcavadora","Volqueta"] %}
+            <option value="{{ o }}" {% if maquina[2]==o %}selected{% endif %}>{{ o }}</option>
+            {% endfor %}
+        </optgroup>
+    </select>
+    <label>Marca</label>
+    <input type="text" name="marca" value="{{ maquina[3] }}" required>
+    <label>Modelo</label>
+    <input type="text" name="modelo" value="{{ maquina[4] }}" required>
+    <div class="form-actions">
+        <a href="{{ url_for('maquinaria') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    </div>
+</form>
+{% endblock %}
+

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Observaciones del mantenimiento #{{ mantenimiento[0] }}</h1>
+<p class="subtitle">Máquina: {{ mantenimiento[1] }} — Estado actual: {{ mantenimiento[7] }}</p>
+
+<form method="POST" class="form-card">
+    <label>Observaciones, detalles o novedades encontradas</label>
+    <textarea name="observaciones" rows="5" placeholder="Ej: se detectó desgaste en filtro de aceite...">{{ mantenimiento[8] or "" }}</textarea>
+
+    <div class="form-actions">
+        <a href="{{ url_for('mantenimientos') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar observaciones</button>
+    </div>
+</form>
+
+{% endblock %}

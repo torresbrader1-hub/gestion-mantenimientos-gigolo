@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Perfil de {{ mecanico[2] }}</h1>
+    <div class="acciones">
+        <a href="{{ url_for('editar_mecanico', id_mecanico=mecanico[0]) }}" class="btn btn-secondary">Editar</a>
+        <a href="{{ url_for('mecanicos') }}" class="btn btn-secondary">Volver a mecánicos</a>
+    </div>
+</div>
+
+<div class="panel detalle-panel" style="margin-bottom:24px;">
+    <div class="detalle-fila"><span class="detalle-label">Identificación</span><span>{{ mecanico[1] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Teléfono</span><span>{{ mecanico[3] }}</span></div>
+    <div class="detalle-fila">
+        <span class="detalle-label">Disponibilidad</span>
+        <span>{% if mecanico[4] %}<span class="badge badge-ok">Disponible</span>{% else %}<span class="badge badge-off">No disponible</span>{% endif %}</span>
+    </div>
+    <div class="detalle-fila"><span class="detalle-label">Carga de hoy</span><span>{{ carga_hoy }} / {{ jornada }} horas</span></div>
+    <div class="detalle-fila destacado"><span class="detalle-label">Mantenimientos finalizados</span><span>{{ finalizados }}</span></div>
+</div>
+
+<div class="cards-grid">
+    <div class="stat-card"><span class="stat-number">${{ "{:,.0f}".format(resumen.generado) }}</span><span class="stat-label">Comisión generada</span></div>
+    <div class="stat-card"><span class="stat-number">${{ "{:,.0f}".format(resumen.pagado) }}</span><span class="stat-label">Ya pagado</span></div>
+    <div class="stat-card accent"><span class="stat-number">${{ "{:,.0f}".format(resumen.pendiente) }}</span><span class="stat-label">Pendiente por pagar</span></div>
+</div>
+
+<h2 style="font-size:16px; margin: 24px 0 12px;">Mantenimientos asignados</h2>
+<table class="data-table">
+    <thead><tr><th>ID</th><th>Máquina</th><th>Cliente</th><th>Tipo</th><th>Fecha</th><th>Comisión</th><th>Estado</th><th>Pagado</th><th></th></tr></thead>
+    <tbody>
+        {% for m in asignados %}
+        <tr>
+            <td>{{ m[0] }}</td><td>{{ m[1] }}</td><td>{{ m[2] if m[2] else "Sin asignar" }}</td><td>{{ m[4] }}</td>
+            <td>{{ m[10][:10] if m[10] else "-" }}</td><td>${{ "{:,.0f}".format(m[6]) }}</td>
+            <td>
+                {% if m[7] == "Finalizado" %}<span class="badge badge-ok">Finalizado</span>
+                {% elif m[7] == "Cancelado" %}<span class="badge badge-off">Cancelado</span>
+                {% else %}<span class="badge">{{ m[7] }}</span>{% endif %}
+            </td>
+            <td>{{ "Sí" if m[15] else "No" }}</td>
+            <td class="acciones"><a href="{{ url_for('detalle_mantenimiento', id_mantenimiento=m[0]) }}" class="link-action">Ver detalle</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="empty">Este mecánico todavía no tiene mantenimientos asignados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="section-header" style="margin-top:28px;">
+    <h2 style="font-size:16px; margin:0;">Últimos pagos</h2>
+    <a href="{{ url_for('pagos_por_mecanico', id_mecanico=mecanico[0]) }}" class="link-action">Ver todos</a>
+</div>
+<table class="data-table">
+    <thead><tr><th>ID</th><th>Periodo semanal</th><th>Mantenimientos</th><th>Valor pagado</th><th>Fecha de pago</th><th></th></tr></thead>
+    <tbody>
+        {% for p in pagos %}
+        <tr>
+            <td>{{ p[0] }}</td><td>{{ p[2] }} — {{ p[3] }}</td><td>{{ p[4] }}</td>
+            <td>${{ "{:,.0f}".format(p[5]) }}</td><td>{{ p[6][:16] if p[6] else "-" }}</td>
+            <td class="acciones"><a href="{{ url_for('detalle_pago', id_pago=p[0]) }}" class="link-action">Ver detalle</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">Este mecánico no tiene pagos registrados todavía.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

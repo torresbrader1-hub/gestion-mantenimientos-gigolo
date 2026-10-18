@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Pagos a Mecánicos</h1>
+    <a href="{{ url_for('nuevo_pago') }}" class="btn btn-primary">+ Calcular / Registrar pago</a>
+</div>
+<table class="data-table">
+    <thead><tr><th>ID</th><th>Mecánico</th><th>Periodo semanal</th><th>Mantenimientos</th><th>Valor total pagado</th><th>Fecha de pago</th><th>Acciones</th></tr></thead>
+    <tbody>
+        {% for p in pagos %}
+        <tr>
+            <td>{{ p[0] }}</td><td>{{ p[1] }}</td><td>{{ p[2] }} — {{ p[3] }}</td><td>{{ p[4] }}</td>
+            <td>${{ "{:,.0f}".format(p[5]) }}</td><td>{{ p[6][:16] if p[6] else "-" }}</td>
+            <td class="acciones"><a href="{{ url_for('detalle_pago', id_pago=p[0]) }}" class="link-action">Ver detalle</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">No hay pagos registrados todavía.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

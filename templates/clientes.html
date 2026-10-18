@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <h1>Gestión de Clientes</h1>
+    <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-primary">+ Nuevo cliente</a>
+</div>
+<form method="GET" class="filtro-fechas">
+    <label>Buscar</label>
+    <input type="text" name="q" value="{{ busqueda }}" placeholder="Nombre o identificación">
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    {% if busqueda %}<a href="{{ url_for('clientes') }}" class="btn btn-secondary">Limpiar</a>{% endif %}
+</form>
+<table class="data-table">
+    
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Identificación</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in clientes %}
+        <tr>
+            <td>{{ c[0] }}</td>
+            <td>{{ c[1] }}</td>
+            <td>{{ c[2] }}</td>
+            <td>{{ c[3] }}</td>
+            <td class="acciones">
+                                <a href="{{ url_for('detalle_cliente', id_cliente=c[0]) }}" class="link-action">Ver ficha</a>
+                <a href="{{ url_for('editar_cliente', id_cliente=c[0]) }}" class="link-action">Editar</a>
+                <a href="{{ url_for('maquinaria_por_cliente', id_cliente=c[0]) }}" class="link-action">Ver máquinas</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">No hay clientes registrados todavía.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Sin acceso</h1>
+{% if sin_vincular %}
+<p>Tu cuenta todavía no está vinculada a un {{ 'mecánico' if session.get('rol') == 'mecanico' else 'cliente' }}.
+   Pídele al administrador que la vincule desde la sección Usuarios y vuelve a iniciar sesión.</p>
+{% else %}
+<p>Tu rol no tiene permiso para ver esta página.</p>
+{% endif %}
+<p><a href="{{ url_for('index') }}">Volver al inicio</a></p>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section-header">
+    <h1>Maquinaria por categoría</h1>
+    <a href="{{ url_for('maquinaria') }}" class="btn btn-secondary">Ver todas</a>
+</div>
+<p class="subtitle">Cada máquina queda clasificada automáticamente al registrarla, según el tipo elegido.</p>
+
+<div class="cards-grid">
+    {% for categoria, cantidad in conteos %}
+    <a href="{{ url_for('maquinaria', categoria=categoria) }}" class="stat-card">
+        <span class="stat-number">{{ cantidad }}</span>
+        <span class="stat-label">{{ categoria }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+{% endblock %}

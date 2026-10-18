@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header">
+    <h1>Pago #{{ pago[0] }} — {{ pago[2] }}</h1>
+    <div class="acciones">
+        <a href="{{ url_for('pagos') }}" class="btn btn-secondary">Volver a pagos</a>
+        <a href="{{ url_for('nuevo_pago') }}" class="btn btn-primary">+ Nuevo pago</a>
+    </div>
+</div>
+<div class="panel detalle-panel" style="margin-bottom:24px;">
+    <div class="detalle-fila"><span class="detalle-label">Mecánico</span><span>{{ pago[2] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Periodo semanal</span><span>{{ pago[3] }} — {{ pago[4] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Mantenimientos pagados</span><span>{{ pago[5] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Fecha de pago</span><span>{{ pago[7][:16] }}</span></div>
+    <div class="detalle-fila destacado"><span class="detalle-label">Valor total pagado</span><span>${{ "{:,.0f}".format(pago[6]) }}</span></div>
+</div>
+<table class="data-table">
+    <thead><tr><th>ID Mantenimiento</th><th>Máquina</th><th>Tipo</th><th>Finalizado</th><th>Precio</th><th>Comisión (30%)</th></tr></thead>
+    <tbody>
+        {% for d in detalle %}
+        <tr>
+            <td>{{ d[0] }}</td><td>{{ d[1] }}</td><td>{{ d[2] }}</td><td>{{ d[5][:16] if d[5] else "-" }}</td>
+            <td>${{ "{:,.0f}".format(d[3]) }}</td><td>${{ "{:,.0f}".format(d[4]) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">Este pago se registró antes de activar el detalle, por eso no tiene mantenimientos asociados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

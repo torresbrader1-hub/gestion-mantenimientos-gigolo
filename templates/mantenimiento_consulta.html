@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Consulta rápida de mantenimiento</h1>
+<p class="subtitle">Escribe el ID del mantenimiento para ver su mecánico asignado, hora de inicio, hora de finalización y observaciones.</p>
+
+<form method="POST" class="form-card">
+    <label>ID del mantenimiento</label>
+    <input type="text" name="id_mantenimiento" inputmode="numeric" required>
+    <div class="form-actions">
+        <a href="{{ url_for('mantenimientos') }}" class="btn btn-secondary">Volver</a>
+        <button type="submit" class="btn btn-primary">Consultar</button>
+    </div>
+</form>
+
+{% if error %}
+<p class="auth-error" style="max-width:420px; margin-top:16px;">{{ error }}</p>
+{% endif %}
+
+{% if resultado %}
+<div class="panel detalle-panel" style="margin-top:20px;">
+    <div class="detalle-fila"><span class="detalle-label">Mantenimiento</span><span>#{{ resultado[0] }} — {{ resultado[1] }}</span></div>
+    <div class="detalle-fila destacado"><span class="detalle-label">Mecánico asignado</span><span>{{ resultado[3] }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Hora de inicio</span><span>{{ resultado[12][:16] if resultado[12] else "Aún no iniciado" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Hora de finalización</span><span>{{ resultado[11][:16] if resultado[11] else "Aún no finalizado" }}</span></div>
+    <div class="detalle-fila"><span class="detalle-label">Observaciones</span><span>{{ resultado[8] if resultado[8] else "Sin observaciones registradas" }}</span></div>
+</div>
+{% endif %}
+
+{% endblock %}
