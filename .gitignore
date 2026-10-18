@@ -1,0 +1,18 @@
+# Caché de Python
+__pycache__/
+*.pyc
+
+# Entornos virtuales
+venv/
+.venv/
+
+# Secretos (nunca se suben)
+.env
+
+# Base de datos con datos personales y contraseñas cifradas
+gigolo.db
+
+# Archivos del editor y del sistema
+.vscode/
+.idea/
+Thumbs.db
