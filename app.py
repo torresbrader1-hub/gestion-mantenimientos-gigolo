@@ -745,7 +745,8 @@ def cambiar_rol_usuario(id_usuario):
     return mostrar_usuarios(ok="Rol actualizado. El usuario verá el cambio al volver a iniciar sesión.")
 
 
+inicializar_base_datos()
+usuario_service.preparar_tabla()
+
 if __name__ == "__main__":
-    inicializar_base_datos()
-    usuario_service.preparar_tabla()
     app.run(debug=True)
