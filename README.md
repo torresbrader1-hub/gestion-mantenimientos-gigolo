@@ -32,7 +32,7 @@ Sistema web para gestionar el mantenimiento de maquinaria: clientes, máquinas, 
 ```
 
 2. Ejecuta `python app.py`.
-3. Abre http://127.0.0.1:5000 en el navegador.
+3. Abre (http://127.0.0.1:5000)en el navegador.
 4. Regístrate: el primer usuario queda como Administrador. Los siguientes quedan como Cliente y el administrador les asigna el rol desde la sección Usuarios.
 
 La base de datos `gigolo.db` se crea sola la primera vez que se ejecuta la aplicación.
